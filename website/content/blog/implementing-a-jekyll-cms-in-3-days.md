@@ -1,18 +1,17 @@
 ---
 title: Implementing a Jekyll CMS in 3 Days
 author: Shea Daniels
-description: >-
-  Monetery, Dwolla's annual tech summit, needed flexibility after building a new
-  website. Using Netlify CMS they added content management to a Jekyll site in
-  three days.
+description: Monetery, Dwolla's annual tech summit, needed flexibility after
+  building a new website. Using Netlify CMS they added content management to a
+  Jekyll site in three days.
 twitter_image: /img/netlify-cms.png
 date: 2019-06-06T12:00:00.000Z
 canonical_url: https://www.dwolla.com/updates/implementing-netlify-cms/
 ---
-
 *This guest post was written by Shea Daniels, Lead Software Engineer at [Dwolla](https://www.dwolla.com) and user of Netlify CMS. It was originally published on the [Dwolla blog](https://www.dwolla.com/updates/implementing-netlify-cms/).*
 
----
+- - -
+
 <br>
 
 [![Screenshot of the Monetery Conference website](https://cdn.dwolla.com/com/prod/20190606103416/Screen-Shot-2019-06-06-at-10.33.31-AM.png)](https://monetery.com)
@@ -26,6 +25,7 @@ A beautiful and usable online presence is simply table stakes in 2019 for busine
 This worked well early on as we launched the Monetery homepage, but it became clear that we needed a more complete solution. Because of our robust controls process, engineering was quickly becoming a roadblock. We needed to do a better job of enabling our content editors to move fast and make necessary changes quickly.
 
 So we took a look at our options:
+
 1. Implement a traditional Content Management System (CMS) like WordPress</li>
 2. Find a Headless CMS to integrate into a Static Site Generator (SSG)</li>
 
@@ -34,11 +34,12 @@ The landscape of potential products for both of these options is monumental. We 
 One of the most interesting solutions we tried came from a company called [Netlify](https://www.netlify.com/), and their project [Netlify CMS](https://www.netlifycms.org/).
 
 We thought Netlify CMS might benefit us for the following reasons:
-- It’s built for use with Static Site Generators so we get to keep the speed, security and scalability benefits that drew us to SSGs in the first place
-- It’s SSG agnostic, so it would work with our existing [Jekyll](https://jekyllrb.com/) site but not prevent us from changing our mind down the road (hi there, [GatsbyJS](https://www.gatsbyjs.org/)!)
-- There is no database backend since content changes are stored as Git commits - which makes [InfoSec](https://www.dwolla.com/security/) folks happy
-- It provides a simple and usable editor experience
-- It’s open source, so there is no vendor lock-in, and we can contribute features that are important to us back to the community
+
+* It’s built for use with Static Site Generators so we get to keep the speed, security and scalability benefits that drew us to SSGs in the first place
+* It’s SSG agnostic, so it would work with our existing [Jekyll](https://jekyllrb.com/) site but not prevent us from changing our mind down the road (hi there, [GatsbyJS](https://www.gatsbyjs.org/)!)
+* There is no database backend since content changes are stored as Git commits - which makes [InfoSec](https://www.dwolla.com/security/) folks happy
+* It provides a simple and usable editor experience
+* It’s open source, so there is no vendor lock-in, and we can contribute features that are important to us back to the community
 
 With buy-in from our stakeholders, we decided to move forward. We’ll talk about the decisions we had to make and show you how to integrate Netlify CMS with Jekyll on your own site.
 
@@ -61,20 +62,22 @@ If you were using the built-in Jekyll gems and build process that GitHub provide
 <figure>
   <figcaption>Gemfile</figcaption>
 
-  ```bash
-  source "https://rubygems.org"
-  gem 'github-pages'
-  ```
+```bash
+source "https://rubygems.org"
+gem 'github-pages'
+```
+
 </figure>
 
 <figure>
   <figcaption>netlify.toml</figcaption>
 
-  ```bash
-  [build]
-  publish = "_site/"
-  command = "jekyll build"
-  ```
+```bash
+[build]
+publish = "_site/"
+command = "jekyll build"
+```
+
 </figure>
 
 Once you’re satisfied that everything looks good and is deploying correctly from Netlify, you can proceed to claim your domain name on Netlify and migrate DNS over to Netlify’s name servers. After your DNS is fully cut over, you can safely turn off the GitHub Pages site from your repo.
@@ -96,22 +99,23 @@ The [Netlify CMS Docs](https://www.netlifycms.org/docs/add-to-your-site/) explai
 <figure>
   <figcaption>admin/index.html</figcaption>
 
-  ```html
-  <!doctype html>
-  <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Content Manager</title>
+```html
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Manager</title>
 
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  </head>
-  <body>
-    <!-- Include the script that builds the page and powers Netlify CMS -->
-    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
-  </body>
-  </html>
-  ```
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <!-- Include the script that builds the page and powers Netlify CMS -->
+  <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+</body>
+</html>
+```
+
 </figure>
 
 > The second file, `admin/config.yml`, is the heart of your Netlify CMS installation, and a bit more complex. The [Configuration](https://www.netlifycms.org/docs/add-to-your-site/#configuration) section covers the details.
@@ -121,22 +125,23 @@ To start with, the config file might look something like this:
 <figure>
   <figcaption>admin/config.yml</figcaption>
 
-  ```yaml
-  backend:
-    name: git-gateway
-    branch: master
-    identity_url: "https://yoursite.com/.netlify/identity"
-    gateway_url: "https://yoursite.com/.netlify/git"
-    squash_merges: true
+```yaml
+backend:
+  name: git-gateway
+  branch: master
+  identity_url: "https://yoursite.com/.netlify/identity"
+  gateway_url: "https://yoursite.com/.netlify/git"
+  squash_merges: true
 
-  publish_mode: editorial_workflow
-  media_folder: "assets/img/uploads"
+publish_mode: editorial_workflow
+media_folder: "assets/img/uploads"
 
-  site_url: https://yoursite.com
-  logo_url: https://yoursite.com/assets/img/logo.svg
+site_url: https://yoursite.com
+logo_url: https://yoursite.com/assets/img/logo.svg
 
-  collections:
-  ```
+collections:
+```
+
 </figure>
 
 The `backend` section covers the basics like which branch to update and sets up the Git Gateway connection that we talked about earlier. The `publish_mode` property sets up our workflow to use the [editorial](https://www.netlifycms.org/docs/add-to-your-site/#editorial-workflow) mode. In short, this means that we have the ability to save page drafts as pull requests in Git before we decide to publish them. Combined with the branch deploys feature of Netlify, this is going to give us live previews of unpublished content from a static site generator!
@@ -176,29 +181,30 @@ A file collection is the perfect place to define data fields for things that are
 <figure>
   <figcaption>admin/config.yml</figcaption>
 
-  ```yaml
-  collections:
-  - label: "Sitewide Options"
-    name: options
-    editor:
-      preview: false
-    files:
-      - label: "Navigation Menu"
-        name: nav
-        file: "_data/nav.yml"
-        fields:
-          - label: "Nav Items"
-            label_singular: "Nav Item"
-            name: topLevelItems
-            widget: list
-            fields:
-              - {label: "Display Text", name: displayText, widget: string}
-              - {label: URL, name: url, widget: string}
-              - label: "Item Type"
-                name: itemType
-                widget: select
-                options: ["Link", "Button"]
-  ```
+```yaml
+collections:
+- label: "Sitewide Options"
+  name: options
+  editor:
+    preview: false
+  files:
+    - label: "Navigation Menu"
+      name: nav
+      file: "_data/nav.yml"
+      fields:
+        - label: "Nav Items"
+          label_singular: "Nav Item"
+          name: topLevelItems
+          widget: list
+          fields:
+            - {label: "Display Text", name: displayText, widget: string}
+            - {label: URL, name: url, widget: string}
+            - label: "Item Type"
+              name: itemType
+              widget: select
+              options: ["Link", "Button"]
+```
+
 </figure>
 
 This will define a new collection that shows up on left side of the CMS admin UI, and it will make a “Navigation Menu” page underneath that collection. Inside are fields that define some site navigation items that each include a name, URL, etc. We define the data type and editor interface of the fields using [widgets](https://www.netlifycms.org/docs/widgets/). When a change is made, it will be saved to the file located at `_data/nav.yml` in your project.
@@ -210,15 +216,16 @@ Here’s an example of what the data file might look like:
 <figure>
   <figcaption>_data/nav.yml</figcaption>
 
-  ```yaml
-  topLevelItems:
-  - displayText: 'A Page'
-    itemType: Link
-    url: /a-page/
-  - displayText: 'External Link'
-    itemType: Link
-    url: '/https://google.com'
-  ```
+```yaml
+topLevelItems:
+- displayText: 'A Page'
+  itemType: Link
+  url: /a-page/
+- displayText: 'External Link'
+  itemType: Link
+  url: '/https://google.com'
+```
+
 </figure>
 
 ### How to Use a File Collection in Jekyll
@@ -250,36 +257,37 @@ Let’s look at the bones of a folder collection from a real config file to see 
 <figure>
   <figcaption>admin/config.yml</figcaption>
 
-  ```yaml
-  collections:
-  - label: "Pages"
-    label_singular: "Page"
-    name: pages
-    folder: "_pages"
-    create: true
-    slug: "{{slug}}"
-    preview_path: "{{permalink}}"
-    editor:
-      preview: false
-    fields:
-      - {label: "Title", name: title, widget: string}
-      - {label: "Permalink", name: permalink, widget: string}
-      - label: "Layout Template"
-        name: "layout"
-        widget: "select"
-        default: "blocks"
-        options:
-          - { label: "Default", value: "blocks" }
-          - { label: "Home Page", value: "home" }
-      - {label: "Meta Description", name: metaDescription, widget: text, required: false}
-      - label: "Social Sharing"
-        name: social
-        widget: object
-        required: false
-        fields:
-          - {label: "OpenGraph Image", name: ogImage, widget: image, required: false}
-          - {label: "Twitter Image", name: twitterImage, widget: image, required: false}
-  ```
+```yaml
+collections:
+- label: "Pages"
+  label_singular: "Page"
+  name: pages
+  folder: "_pages"
+  create: true
+  slug: "{{slug}}"
+  preview_path: "{{permalink}}"
+  editor:
+    preview: false
+  fields:
+    - {label: "Title", name: title, widget: string}
+    - {label: "Permalink", name: permalink, widget: string}
+    - label: "Layout Template"
+      name: "layout"
+      widget: "select"
+      default: "blocks"
+      options:
+        - { label: "Default", value: "blocks" }
+        - { label: "Home Page", value: "home" }
+    - {label: "Meta Description", name: metaDescription, widget: text, required: false}
+    - label: "Social Sharing"
+      name: social
+      widget: object
+      required: false
+      fields:
+        - {label: "OpenGraph Image", name: ogImage, widget: image, required: false}
+        - {label: "Twitter Image", name: twitterImage, widget: image, required: false}
+```
+
 </figure>
 
 This defines another new collection called “Pages” that will consist of many files all stored in the `/_pages/` folder of your project. The files will be named according to the pattern in the slug field, which we’ve confusingly set to have a pattern of `{{slug}}`. Don’t worry, in this case it just means we’ll be using the default value, which is the contents of the `title` field. You can configure this in many ways to include dates and other things to match your intended use, but this is perfect for our case.
@@ -293,15 +301,16 @@ Here’s an example of what the data file for a page might look like:
 <figure>
   <figcaption>_pages/home.md</figcaption>
 
-  ```liquid
-  ---
-  Title: Home
-  permalink: /
-  layout: home
-  metaDescription: Shout out what you’re about!
-  social: {}
-  ---
-  ```
+```liquid
+---
+Title: Home
+permalink: /
+layout: home
+metaDescription: Shout out what you’re about!
+social: {}
+---
+```
+
 </figure>
 
 ### How to Use a Folder Collection in Jekyll
@@ -315,11 +324,12 @@ Before we start, we need to make an addition to the Jekyll config file:
 <figure>
   <figcaption>_config.yml</figcaption>
 
-  ```yaml
-  collections:
-  pages:
-    output: true
-  ```
+```yaml
+collections:
+pages:
+  output: true
+```
+
 </figure>
 
 This tells Jekyll to generate a new page for each markdown file in the `pages` folder.
@@ -331,17 +341,18 @@ Let’s look at an example layout template:
 <figure>
   <figcaption>_layouts/home.html</figcaption>
 
-  ```liquid
-  ---
-  layout: default
-  ---
+```liquid
+---
+layout: default
+---
 
-  <h1>{{ page.title }}</h1>
+<h1>{{ page.title }}</h1>
 
-  <section class="home">
-    {{ content }}
-  </section>
-  ```
+<section class="home">
+  {{ content }}
+</section>
+```
+
 </figure>
 
 All of the data we are interested in from the front matter is available using the `{collection}.{field}` syntax that Jekyll provides. We’re able to use parent templates and all of the other features as you’d expect.
@@ -355,29 +366,29 @@ First, we need to define our components in the Netlify CMS config file:
 <figure>
   <figcaption>_admin/config.yml</figcaption>
 
-  ```yaml
-  collections:
-    - label: "Pages"
-      ...
-      - label: "Content Blocks"
-        label_singular: "Content Block"
-        name: blocks
-        widget: list
-        types:
-          - label: "Hero"
-            name: hero
-            widget: object
-            fields:
-              - {label: "Heading", name: heading, widget: string}
-              - {label: "Content", name: content, widget: markdown, buttons: ["bold", "italic", "link"], required: false}
-          - label: "Rich Text Block"
-            name: textBlock
-            widget: object
-            fields:
-              - {label: "Heading", name: heading, widget: string, required: false}
-              - {label: "Content", name: content, widget: markdown}
-          ...
-  ```
+```yaml
+collections:
+  - label: "Pages"
+    ...
+    - label: "Content Blocks"
+      label_singular: "Content Block"
+      name: blocks
+      widget: list
+      types:
+        - label: "Hero"
+          name: hero
+          widget: object
+          fields:
+            - {label: "Heading", name: heading, widget: string}
+            - {label: "Content", name: content, widget: markdown, buttons: ["bold", "italic", "link"], required: false}
+        - label: "Rich Text Block"
+          name: textBlock
+          widget: object
+          fields:
+            - {label: "Heading", name: heading, widget: string, required: false}
+            - {label: "Content", name: content, widget: markdown}
+        ...
+```
 
 </figure>
 
@@ -390,15 +401,16 @@ Now let’s make a new layout to render our widgets:
 <figure>
   <figcaption>_layouts/blocks.html</figcaption>
 
-  ```liquid
-  ---
-  layout: default
-  ---
+```liquid
+---
+layout: default
+---
 
-  {% for block in page.blocks %}
-    {% include blocks/{{ block.type }}.html block=block %}
-  {% endfor %}  
-  ```
+{% for block in page.blocks %}
+  {% include blocks/{{ block.type }}.html block=block %}
+{% endfor %}  
+```
+
 </figure>
 
 Here we’re looping through each component on the page, and including another template file that knows how to render it. Here’s what a component template might look like:
@@ -406,16 +418,19 @@ Here we’re looping through each component on the page, and including another t
 <figure>
   <figcaption>_includes/blocks/hero.html</figcaption>
 
-  ```liquid
-  <header class="page-hero">
-    <h1>{{ block.heading }}</h1>
-    {% if block.content and block.content != '' %}
-      <div class="max-width--330">
-        {{ block.content | markdownify }}
-      </div>
-    {% endif %}
-  </header>
-  ```
+test
+
+```liquid
+<header class="page-hero">
+  <h1>{{ block.heading }}</h1>
+  {% if block.content and block.content != '' %}
+    <div class="max-width--330">
+      {{ block.content | markdownify }}
+    </div>
+  {% endif %}
+</header>
+```
+
 </figure>
 
 Because we passed along our block variable, everything is right where we need it. You’ll also notice we took special care to translate our markdown into HTML with markdownify since that isn’t being automatically done for us any more.
@@ -424,30 +439,30 @@ Because we passed along our block variable, everything is right where we need it
 
 Using these techniques, our engineers were able to integrate Netlify CMS into our existing Jekyll site for [Monetery](https://monetery.com/) and launch a working CMS within a matter of days (three, to be exact). Content editors were able to onboard quickly and start publishing changes and new pages shortly after launch. During that time we also onboarded a new engineer who was able to start making meaningful contributions on their second day of work!
 
-
 That said, [we’re never done](https://www.dwolla.com/about/core-beliefs/). We’re constantly learning from our experiences and trying to improve. Let’s take a balanced look at both the pros and cons of using Netlify + Netlify CMS:
 
 ### Pros
-- Hosting on Netlify is a breeze and we haven’t experienced any issues with the site itself
-- Netlify CMS was very easy to retrofit onto an existing Jekyll project and intuitive for new engineers to learn
-- It’s easy and very useful to get a copy of your entire project, including content, and run it locally using docker<
-- The Netlify CMS interface is simple and easy to learn for content editors
-- Branch deploys and previews are amazing
-- Netlify’s free plans give you the freedom to evaluate the offering before committing
-- There is an active and very helpful [community chat](https://netlifycms.org/chat) for Netlify CMS
-- Netlify CMS is open source and welcomes contributions
+
+* Hosting on Netlify is a breeze and we haven’t experienced any issues with the site itself
+* Netlify CMS was very easy to retrofit onto an existing Jekyll project and intuitive for new engineers to learn
+* It’s easy and very useful to get a copy of your entire project, including content, and run it locally using docker<
+* The Netlify CMS interface is simple and easy to learn for content editors
+* Branch deploys and previews are amazing
+* Netlify’s free plans give you the freedom to evaluate the offering before committing
+* There is an active and very helpful [community chat](https://netlifycms.org/chat) for Netlify CMS
+* Netlify CMS is open source and welcomes contributions
 
 ### Cons
-- Our content editors like the editorial workflow but don’t like the multiple steps to save and publish
-- Saving and publishing is relatively slow, sometimes up to a few seconds
-- We experience occasional—but frustrating—errors when using the CMS admin
-- Some widgets or functionality that you might be looking for, such as conditional logic for displaying fields in the admin UI, hasn’t been implemented yet
-- The CMS UI doesn’t work to save content to your machine during local development, it will always commit back to your Git repository, so be careful
-- You are better off hosting with Netlify instead of another provider if you want features like branch deploys and a hosted Git Gateway - this may incur more cost to your business
+
+* Our content editors like the editorial workflow but don’t like the multiple steps to save and publish
+* Saving and publishing is relatively slow, sometimes up to a few seconds
+* We experience occasional—but frustrating—errors when using the CMS admin
+* Some widgets or functionality that you might be looking for, such as conditional logic for displaying fields in the admin UI, hasn’t been implemented yet
+* The CMS UI doesn’t work to save content to your machine during local development, it will always commit back to your Git repository, so be careful
+* You are better off hosting with Netlify instead of another provider if you want features like branch deploys and a hosted Git Gateway - this may incur more cost to your business
 
 ## The Community &amp; Contributing Back
 
 The Netlify CMS community has been nothing short of wonderful to interact with, so we encourage you to reach out and give this technology a try. Dwolla also believes in linking our words with our actions, so we’re committed to giving back to the open source community. We’re happy to report that our first pull request contributing to Netlify CMS is already live!
-
 
 Check out the code on GitHub: https://github.com/netlify/netlify-cms
